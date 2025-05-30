@@ -5,7 +5,7 @@ import {
 
 const Contact = () => {
   return (
-    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black py-4 px-4">
+    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black py-4 px-4" id="Contact">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-6">

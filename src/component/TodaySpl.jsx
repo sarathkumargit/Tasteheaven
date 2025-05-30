@@ -91,7 +91,7 @@ const TodaySpl = () => {
   return (
     // Main section container
     <section 
-      className="relative py-1 px-4 sm:px-6 lg:px-8 " // Reduced py from py-2 to py-1
+      className="relative py-1 px-4 sm:px-6 lg:px-8"  id="TodaySpl" // Reduced py from py-2 to py-1
       style={{
         backgroundImage: " url('https://www.centricsoftware.com/wp-content/uploads/2024/06/24Q2_NAM_CAM_ALL_Retail_Grocery_Private_Label_LP_Banner_1920_x_650.jpg')",
         backgroundSize: "cover",

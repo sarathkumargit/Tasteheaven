@@ -11,7 +11,7 @@ const Hero = () => {
   ];
 
   return (
-    <div className="relative h-[100vh] overflow-hidden">
+    <div className="relative h-[100vh] overflow-hidden" id="Hero">
       {/* Background Image Container with Zoom Animation */}
       <div 
         className="absolute inset-0 overflow-hidden"

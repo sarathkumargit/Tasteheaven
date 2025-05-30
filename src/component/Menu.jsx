@@ -26,7 +26,7 @@ const Menu = () => {
   ];
 
   return (
-    <section className="bg-white py-12 px-4 sm:px-6 lg:px-8">
+    <section className="bg-white py-12 px-4 sm:px-6 lg:px-8" id="Menu">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12">

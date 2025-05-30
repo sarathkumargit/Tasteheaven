@@ -2,7 +2,7 @@ import React from 'react'
 
 const Story = () => {
   return (
-    <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 py-8 px-4 sm:px-6">
+    <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 py-8 px-4 sm:px-6" id="Story">
       <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-2 gap-10 items-center">
           {/* Left side - Photo */}
