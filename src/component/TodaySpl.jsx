@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
-import { ChefHat, Star, Clock, ArrowRight, Heart, Plus } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ChefHat, Star, Clock, ArrowRight, Heart, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const TodaySpl = () => {
   const [favorites, setFavorites] = useState(new Set());
   const [hoveredItem, setHoveredItem] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const scrollContainerRef = useRef(null);
+  const autoSlideIntervalRef = useRef(null);
 
   const specials = [
     {
@@ -34,7 +38,7 @@ const TodaySpl = () => {
       category: "Dinner",
       price: "$24.99",
       originalPrice: "$29.99",
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?w=300&h=200&fit=crop", // Note: This image URL is duplicated, consider changing for variety
+      image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=300&h=200&fit=crop",
       rating: 4.9,
       prepTime: "22 min",
       description: "Fresh linguine with mixed seafood in a rich white wine sauce"
@@ -56,7 +60,7 @@ const TodaySpl = () => {
       category: "Dinner",
       price: "$32.99",
       originalPrice: "$36.99",
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?w=300&h=200&fit=crop", // Note: This image URL is duplicated, consider changing for variety
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?w=300&h=200&fit=crop",
       rating: 4.6,
       prepTime: "30 min",
       description: "Tender pork ribs with smoky BBQ sauce and coleslaw"
@@ -74,11 +78,59 @@ const TodaySpl = () => {
     }
   ];
 
-  const toggleFavorite = (id) => {
-    // Stop propagation to prevent card hover effects from triggering
-    // when clicking the favorite button.
-    // e.stopPropagation(); // This should be called in the onClick handler directly
+  // Auto-slide functionality
+  useEffect(() => {
+    if (isAutoPlaying) {
+      autoSlideIntervalRef.current = setInterval(() => {
+        setCurrentIndex((prevIndex) => {
+          const nextIndex = (prevIndex + 1) % specials.length;
+          scrollToIndex(nextIndex);
+          return nextIndex;
+        });
+      }, 3000); // Change slide every 3 seconds
+    }
 
+    return () => {
+      if (autoSlideIntervalRef.current) {
+        clearInterval(autoSlideIntervalRef.current);
+      }
+    };
+  }, [isAutoPlaying, specials.length]);
+
+  // Scroll to specific index
+  const scrollToIndex = (index) => {
+    if (scrollContainerRef.current) {
+      const cardWidth = 320; // Approximate card width including gap
+      const scrollPosition = index * cardWidth;
+      scrollContainerRef.current.scrollTo({
+        left: scrollPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  // Navigation functions
+  const goToPrevious = () => {
+    setIsAutoPlaying(false); // Pause auto-play when user interacts
+    const newIndex = currentIndex > 0 ? currentIndex - 1 : specials.length - 1;
+    setCurrentIndex(newIndex);
+    scrollToIndex(newIndex);
+    
+    // Resume auto-play after 5 seconds
+    setTimeout(() => setIsAutoPlaying(true), 5000);
+  };
+
+  const goToNext = () => {
+    setIsAutoPlaying(false); // Pause auto-play when user interacts
+    const newIndex = (currentIndex + 1) % specials.length;
+    setCurrentIndex(newIndex);
+    scrollToIndex(newIndex);
+    
+    // Resume auto-play after 5 seconds
+    setTimeout(() => setIsAutoPlaying(true), 5000);
+  };
+
+  const toggleFavorite = (id) => {
     const newFavorites = new Set(favorites);
     if (newFavorites.has(id)) {
       newFavorites.delete(id);
@@ -89,139 +141,175 @@ const TodaySpl = () => {
   };
 
   return (
-    // Main section container
     <section 
-      className="relative py-1 px-4 sm:px-6 lg:px-8"  id="TodaySpl" // Reduced py from py-2 to py-1
+      className="relative py-1 px-4 sm:px-6 lg:px-8" 
+      id="TodaySpl"
       style={{
-        backgroundImage: " url('https://www.centricsoftware.com/wp-content/uploads/2024/06/24Q2_NAM_CAM_ALL_Retail_Grocery_Private_Label_LP_Banner_1920_x_650.jpg')",
+        backgroundImage: "url('https://www.centricsoftware.com/wp-content/uploads/2024/06/24Q2_NAM_CAM_ALL_Retail_Grocery_Private_Label_LP_Banner_1920_x_650.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      {/* Optional subtle texture overlay */}
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/subtle-white-feathers.png')] opacity-10"></div>
       
-      {/* Content wrapper with z-index to be above the overlay */}
       <div className="relative z-10 max-w-7xl mx-auto">
-        {/* Compact Header */}
-        <div className="text-center mb-8"> {/* Reduced mb from mb-12 to mb-8 */}
-          {/* Chef Hat Icon */}
+        {/* Header */}
+        <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full mb-5 shadow-lg transform transition-all duration-300 hover:rotate-12 hover:scale-110">
             <ChefHat className="w-7 h-7 text-white" />
           </div>
-          {/* Section Title */}
           <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 via-amber-800 to-orange-600 bg-clip-text text-transparent mb-3">
             Today's Specials
           </h2>
-          {/* Section Subtitle */}
           <p className="text-lg text-gray-700 max-w-2xl mx-auto">
             Discover our chef-recommended dinner specialties
           </p>
         </div>
 
-        {/* Horizontal Scrollable Cards */}
-        <div className="relative mb-6"> {/* Reduced mb from mb-10 to mb-6 */}
-          {/* Flex container for horizontal scrolling */}
-          <div className="flex overflow-x-auto scrollbar-hide gap-6 pb-6 snap-x snap-mandatory">
-            {specials.map((item) => (
-              // Individual Card
-              <div
-                key={item.id}
-                className="flex-none w-72 sm:w-80 bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl snap-start border border-white/20"
-                onMouseEnter={() => setHoveredItem(item.id)}
-                onMouseLeave={() => setHoveredItem(null)}
-              >
-                {/* Image Container */}
-                <div className="relative h-44 overflow-hidden">
-                  <img 
-                    src={item.image} 
-                    alt={item.name} 
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    onError={(e) => {
-                      // Fallback image in case the original image fails to load
-                      e.target.onerror = null; 
-                      e.target.src="https://placehold.co/300x200/f97316/white?text=Image+Not+Found";
-                    }}
-                  />
-                  
-                  {/* Gradient Overlay on Image */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/10 to-transparent"></div>
-                  
-                  {/* Favorite Heart Button */}
-                  <button
-                    onClick={(e) => { e.stopPropagation(); toggleFavorite(item.id); }}
-                    className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-sm transition-all duration-300 transform hover:scale-110 ${
-                      favorites.has(item.id) 
-                        ? 'bg-red-500/90 text-white shadow-md' 
-                        : 'bg-white/90 text-gray-600 hover:bg-red-50 hover:text-red-500'
-                    }`}
-                    aria-label={favorites.has(item.id) ? "Remove from favorites" : "Add to favorites"}
-                  >
-                    <Heart className={`w-4 h-4 ${favorites.has(item.id) ? 'fill-current' : ''}`} />
-                  </button>
+        {/* Carousel Container with Navigation */}
+        <div className="relative mb-6">
+          {/* Left Arrow */}
+          <button
+            onClick={goToPrevious}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full p-3 transition-all duration-300 transform hover:scale-110 border border-gray-200 group"
+            aria-label="Previous item"
+          >
+            <ChevronLeft className="w-6 h-6 text-gray-700 group-hover:text-amber-600 transition-colors duration-300" />
+          </button>
 
-                  {/* Category Badge */}
-                  <div className="absolute top-3 left-3 bg-amber-500/95 text-white px-3 py-1 rounded-full text-xs font-medium shadow-md">
-                    {item.category}
+          {/* Right Arrow */}
+          <button
+            onClick={goToNext}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full p-3 transition-all duration-300 transform hover:scale-110 border border-gray-200 group"
+            aria-label="Next item"
+          >
+            <ChevronRight className="w-6 h-6 text-gray-700 group-hover:text-amber-600 transition-colors duration-300" />
+          </button>
+
+          {/* Scrollable Cards Container */}
+          <div className="mx-12"> {/* Add margin to avoid overlap with arrows */}
+            <div 
+              ref={scrollContainerRef}
+              className="flex overflow-x-auto scrollbar-hide gap-6 pb-6 snap-x snap-mandatory"
+              onMouseEnter={() => setIsAutoPlaying(false)} // Pause on hover
+              onMouseLeave={() => setIsAutoPlaying(true)} // Resume on leave
+            >
+              {specials.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="flex-none w-72 sm:w-80 bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl snap-start border border-white/20"
+                  onMouseEnter={() => setHoveredItem(item.id)}
+                  onMouseLeave={() => setHoveredItem(null)}
+                >
+                  {/* Image Container */}
+                  <div className="relative h-44 overflow-hidden">
+                    <img 
+                      src={item.image} 
+                      alt={item.name} 
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                      onError={(e) => {
+                        e.target.onerror = null; 
+                        e.target.src="https://placehold.co/300x200/f97316/white?text=Image+Not+Found";
+                      }}
+                    />
+                    
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/10 to-transparent"></div>
+                    
+                    {/* Favorite Heart Button */}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); toggleFavorite(item.id); }}
+                      className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-sm transition-all duration-300 transform hover:scale-110 ${
+                        favorites.has(item.id) 
+                          ? 'bg-red-500/90 text-white shadow-md' 
+                          : 'bg-white/90 text-gray-600 hover:bg-red-50 hover:text-red-500'
+                      }`}
+                      aria-label={favorites.has(item.id) ? "Remove from favorites" : "Add to favorites"}
+                    >
+                      <Heart className={`w-4 h-4 ${favorites.has(item.id) ? 'fill-current' : ''}`} />
+                    </button>
+
+                    {/* Category Badge */}
+                    <div className="absolute top-3 left-3 bg-amber-500/95 text-white px-3 py-1 rounded-full text-xs font-medium shadow-md">
+                      {item.category}
+                    </div>
+
+                    {/* Rating & Prep Time */}
+                    <div className={`absolute bottom-3 left-3 right-3 flex justify-between items-center transition-all duration-300 ${
+                      hoveredItem === item.id ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
+                    }`}>
+                      <div className="flex items-center space-x-1 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 shadow-sm">
+                        <Star className="w-3.5 h-3.5 text-amber-400 fill-current" />
+                        <span className="text-xs font-medium text-gray-800">{item.rating}</span>
+                      </div>
+                      <div className="flex items-center space-x-1 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 shadow-sm">
+                        <Clock className="w-3.5 h-3.5 text-gray-600" />
+                        <span className="text-xs font-medium text-gray-800">{item.prepTime}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Rating & Prep Time - visible on hover */}
-                  <div className={`absolute bottom-3 left-3 right-3 flex justify-between items-center transition-all duration-300 ${
-                    hoveredItem === item.id ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none' // Added pointer-events-none when hidden
-                  }`}>
-                    {/* Rating */}
-                    <div className="flex items-center space-x-1 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 shadow-sm">
-                      <Star className="w-3.5 h-3.5 text-amber-400 fill-current" />
-                      <span className="text-xs font-medium text-gray-800">{item.rating}</span>
+                  {/* Card Content */}
+                  <div className="p-5">
+                    <div className="flex justify-between items-start mb-3">
+                      <h3 className="text-lg font-bold text-gray-900 hover:text-amber-600 transition-colors duration-300 line-clamp-1">
+                        {item.name}
+                      </h3>
+                      <div className="text-right ml-2 flex-shrink-0">
+                        <span className="text-xl font-bold text-amber-600">{item.price}</span>
+                        <div className="text-xs text-gray-400 line-through">{item.originalPrice}</div>
+                      </div>
                     </div>
-                    {/* Prep Time */}
-                    <div className="flex items-center space-x-1 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 shadow-sm">
-                      <Clock className="w-3.5 h-3.5 text-gray-600" />
-                      <span className="text-xs font-medium text-gray-800">{item.prepTime}</span>
-                    </div>
+                    
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                      {item.description}
+                    </p>
+
+                    <button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-2.5 px-4 rounded-lg font-medium transition-all duration-300 transform hover:from-amber-600 hover:to-orange-600 hover:shadow-md hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center space-x-2 group/btn">
+                      <Plus className="w-4 h-4 transition-transform duration-300 group-hover/btn:rotate-90" />
+                      <span className="text-sm">Add to Cart</span>
+                    </button>
                   </div>
                 </div>
+              ))}
+            </div>
+          </div>
 
-                {/* Card Content Area */}
-                <div className="p-5">
-                  {/* Item Name and Price */}
-                  <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-lg font-bold text-gray-900 hover:text-amber-600 transition-colors duration-300 line-clamp-1">
-                      {item.name}
-                    </h3>
-                    <div className="text-right ml-2 flex-shrink-0"> {/* Added flex-shrink-0 to prevent price from wrapping too early */}
-                      <span className="text-xl font-bold text-amber-600">{item.price}</span>
-                      <div className="text-xs text-gray-400 line-through">{item.originalPrice}</div>
-                    </div>
-                  </div>
-                  
-                  {/* Item Description */}
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                    {item.description}
-                  </p>
-
-                  {/* Add to Cart Button */}
-                  <button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-2.5 px-4 rounded-lg font-medium transition-all duration-300 transform hover:from-amber-600 hover:to-orange-600 hover:shadow-md hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center space-x-2 group/btn">
-                    <Plus className="w-4 h-4 transition-transform duration-300 group-hover/btn:rotate-90" />
-                    <span className="text-sm">Add to Cart</span>
-                  </button>
-                </div>
-              </div>
+          {/* Progress Indicators */}
+          <div className="flex justify-center mt-6 space-x-2">
+            {specials.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setCurrentIndex(index);
+                  scrollToIndex(index);
+                  setIsAutoPlaying(false);
+                  setTimeout(() => setIsAutoPlaying(true), 5000);
+                }}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  index === currentIndex 
+                    ? 'bg-amber-500 scale-125' 
+                    : 'bg-amber-400/30 hover:bg-amber-500/60'
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
             ))}
           </div>
-          
-          {/* Scroll Indicators for Mobile (dots) */}
-          <div className="flex justify-center mt-6 space-x-2 md:hidden">
-            {specials.map((_, index) => (
-              <div key={index} className="w-2.5 h-2.5 bg-amber-400/30 rounded-full transition-all duration-300 hover:bg-amber-500"></div>
-            ))}
+
+          {/* Auto-play Status Indicator */}
+          <div className="absolute top-4 right-4 z-10">
+            <div className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 ${
+              isAutoPlaying 
+                ? 'bg-green-500/90 text-white' 
+                : 'bg-gray-500/90 text-white'
+            }`}>
+              {isAutoPlaying ? 'Auto-playing' : 'Paused'}
+            </div>
           </div>
         </div>
 
         {/* Call to Action Button */}
-        <div className="text-center mt-6"> {/* Reduced mt from mt-8 to mt-6 */}
+        <div className="text-center mt-6">
           <button className="group relative inline-flex items-center px-8 py-3.5 bg-gradient-to-r from-amber-600 via-orange-500 to-red-500 text-white text-base font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden">
-            {/* Animated Shine Effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
             <span className="relative flex items-center space-x-2">
               <span>View Full Menu</span>
@@ -231,14 +319,13 @@ const TodaySpl = () => {
         </div>
       </div>
 
-      {/* Inline CSS for scrollbar hiding and line clamping */}
       <style jsx>{`
         .scrollbar-hide {
-          -ms-overflow-style: none; /* IE and Edge */
-          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
         .scrollbar-hide::-webkit-scrollbar {
-          display: none; /* Safari and Chrome */
+          display: none;
         }
         .line-clamp-1 {
           display: -webkit-box;

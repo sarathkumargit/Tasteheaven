@@ -54,13 +54,7 @@ const Hero = () => {
             Where culinary artistry meets unforgettable dining experiences
           </p>
           <div className='flex space-x-4 justify-center'>
-          <button className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-full text-base transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-lg">
-            sign up 
-          </button>
-
-            <button className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-full text-base transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-lg">
-            sign in 
-          </button>
+        
           </div>
         </div>
 
