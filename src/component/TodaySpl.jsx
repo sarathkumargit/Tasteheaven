@@ -100,7 +100,9 @@ const TodaySpl = () => {
   // Scroll to specific index
   const scrollToIndex = (index) => {
     if (scrollContainerRef.current) {
-      const cardWidth = 320; // Approximate card width including gap
+      // Dynamic card width calculation based on screen size
+      const isMobile = window.innerWidth < 640;
+      const cardWidth = isMobile ? 280 : 320; // Mobile: 280px, Desktop: 320px
       const scrollPosition = index * cardWidth;
       scrollContainerRef.current.scrollTo({
         left: scrollPosition,
@@ -154,55 +156,55 @@ const TodaySpl = () => {
       
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full mb-5 shadow-lg transform transition-all duration-300 hover:rotate-12 hover:scale-110">
-            <ChefHat className="w-7 h-7 text-white" />
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full mb-4 sm:mb-5 shadow-lg transform transition-all duration-300 hover:rotate-12 hover:scale-110">
+            <ChefHat className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 via-amber-800 to-orange-600 bg-clip-text text-transparent mb-3">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 via-amber-800 to-orange-600 bg-clip-text text-transparent mb-2 sm:mb-3 px-4">
             Today's Specials
           </h2>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-gray-700 max-w-2xl mx-auto px-4">
             Discover our chef-recommended dinner specialties
           </p>
         </div>
 
         {/* Carousel Container with Navigation */}
-        <div className="relative mb-6">
-          {/* Left Arrow */}
+        <div className="relative mb-4 sm:mb-6">
+          {/* Left Arrow - Hidden on mobile, visible on tablet+ */}
           <button
             onClick={goToPrevious}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full p-3 transition-all duration-300 transform hover:scale-110 border border-gray-200 group"
+            className="hidden sm:block absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full p-2 sm:p-3 transition-all duration-300 transform hover:scale-110 border border-gray-200 group"
             aria-label="Previous item"
           >
-            <ChevronLeft className="w-6 h-6 text-gray-700 group-hover:text-amber-600 transition-colors duration-300" />
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 group-hover:text-amber-600 transition-colors duration-300" />
           </button>
 
-          {/* Right Arrow */}
+          {/* Right Arrow - Hidden on mobile, visible on tablet+ */}
           <button
             onClick={goToNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full p-3 transition-all duration-300 transform hover:scale-110 border border-gray-200 group"
+            className="hidden sm:block absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full p-2 sm:p-3 transition-all duration-300 transform hover:scale-110 border border-gray-200 group"
             aria-label="Next item"
           >
-            <ChevronRight className="w-6 h-6 text-gray-700 group-hover:text-amber-600 transition-colors duration-300" />
+            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 group-hover:text-amber-600 transition-colors duration-300" />
           </button>
 
           {/* Scrollable Cards Container */}
-          <div className="mx-12"> {/* Add margin to avoid overlap with arrows */}
+          <div className="sm:mx-12"> {/* Add margin only on larger screens to avoid overlap with arrows */}
             <div 
               ref={scrollContainerRef}
-              className="flex overflow-x-auto scrollbar-hide gap-6 pb-6 snap-x snap-mandatory"
+              className="flex overflow-x-auto scrollbar-hide gap-4 sm:gap-6 pb-4 sm:pb-6 snap-x snap-mandatory px-4 sm:px-0"
               onMouseEnter={() => setIsAutoPlaying(false)} // Pause on hover
               onMouseLeave={() => setIsAutoPlaying(true)} // Resume on leave
             >
               {specials.map((item, index) => (
                 <div
                   key={item.id}
-                  className="flex-none w-72 sm:w-80 bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl snap-start border border-white/20"
+                  className="flex-none w-64 sm:w-72 md:w-80 bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl snap-start border border-white/20"
                   onMouseEnter={() => setHoveredItem(item.id)}
                   onMouseLeave={() => setHoveredItem(null)}
                 >
                   {/* Image Container */}
-                  <div className="relative h-44 overflow-hidden">
+                  <div className="relative h-36 sm:h-44 overflow-hidden">
                     <img 
                       src={item.image} 
                       alt={item.name} 
@@ -218,53 +220,53 @@ const TodaySpl = () => {
                     {/* Favorite Heart Button */}
                     <button
                       onClick={(e) => { e.stopPropagation(); toggleFavorite(item.id); }}
-                      className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-sm transition-all duration-300 transform hover:scale-110 ${
+                      className={`absolute top-2 sm:top-3 right-2 sm:right-3 p-1.5 sm:p-2 rounded-full backdrop-blur-sm transition-all duration-300 transform hover:scale-110 ${
                         favorites.has(item.id) 
                           ? 'bg-red-500/90 text-white shadow-md' 
                           : 'bg-white/90 text-gray-600 hover:bg-red-50 hover:text-red-500'
                       }`}
                       aria-label={favorites.has(item.id) ? "Remove from favorites" : "Add to favorites"}
                     >
-                      <Heart className={`w-4 h-4 ${favorites.has(item.id) ? 'fill-current' : ''}`} />
+                      <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${favorites.has(item.id) ? 'fill-current' : ''}`} />
                     </button>
 
                     {/* Category Badge */}
-                    <div className="absolute top-3 left-3 bg-amber-500/95 text-white px-3 py-1 rounded-full text-xs font-medium shadow-md">
+                    <div className="absolute top-2 sm:top-3 left-2 sm:left-3 bg-amber-500/95 text-white px-2 sm:px-3 py-1 rounded-full text-xs font-medium shadow-md">
                       {item.category}
                     </div>
 
                     {/* Rating & Prep Time */}
-                    <div className={`absolute bottom-3 left-3 right-3 flex justify-between items-center transition-all duration-300 ${
+                    <div className={`absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3 flex justify-between items-center transition-all duration-300 ${
                       hoveredItem === item.id ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
                     }`}>
-                      <div className="flex items-center space-x-1 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 shadow-sm">
-                        <Star className="w-3.5 h-3.5 text-amber-400 fill-current" />
+                      <div className="flex items-center space-x-1 bg-white/95 backdrop-blur-sm rounded-full px-2 sm:px-3 py-1 shadow-sm">
+                        <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400 fill-current" />
                         <span className="text-xs font-medium text-gray-800">{item.rating}</span>
                       </div>
-                      <div className="flex items-center space-x-1 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 shadow-sm">
-                        <Clock className="w-3.5 h-3.5 text-gray-600" />
+                      <div className="flex items-center space-x-1 bg-white/95 backdrop-blur-sm rounded-full px-2 sm:px-3 py-1 shadow-sm">
+                        <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-600" />
                         <span className="text-xs font-medium text-gray-800">{item.prepTime}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Card Content */}
-                  <div className="p-5">
-                    <div className="flex justify-between items-start mb-3">
-                      <h3 className="text-lg font-bold text-gray-900 hover:text-amber-600 transition-colors duration-300 line-clamp-1">
+                  <div className="p-4 sm:p-5">
+                    <div className="flex justify-between items-start mb-2 sm:mb-3">
+                      <h3 className="text-base sm:text-lg font-bold text-gray-900 hover:text-amber-600 transition-colors duration-300 line-clamp-1">
                         {item.name}
                       </h3>
                       <div className="text-right ml-2 flex-shrink-0">
-                        <span className="text-xl font-bold text-amber-600">{item.price}</span>
+                        <span className="text-lg sm:text-xl font-bold text-amber-600">{item.price}</span>
                         <div className="text-xs text-gray-400 line-through">{item.originalPrice}</div>
                       </div>
                     </div>
                     
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                    <p className="text-gray-600 text-sm mb-3 sm:mb-4 line-clamp-2">
                       {item.description}
                     </p>
 
-                    <button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-2.5 px-4 rounded-lg font-medium transition-all duration-300 transform hover:from-amber-600 hover:to-orange-600 hover:shadow-md hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center space-x-2 group/btn">
+                    <button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-2 sm:py-2.5 px-4 rounded-lg font-medium transition-all duration-300 transform hover:from-amber-600 hover:to-orange-600 hover:shadow-md hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center space-x-2 group/btn">
                       <Plus className="w-4 h-4 transition-transform duration-300 group-hover/btn:rotate-90" />
                       <span className="text-sm">Add to Cart</span>
                     </button>
@@ -275,7 +277,7 @@ const TodaySpl = () => {
           </div>
 
           {/* Progress Indicators */}
-          <div className="flex justify-center mt-6 space-x-2">
+          <div className="flex justify-center mt-4 sm:mt-6 space-x-2">
             {specials.map((_, index) => (
               <button
                 key={index}
@@ -285,7 +287,7 @@ const TodaySpl = () => {
                   setIsAutoPlaying(false);
                   setTimeout(() => setIsAutoPlaying(true), 5000);
                 }}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
                   index === currentIndex 
                     ? 'bg-amber-500 scale-125' 
                     : 'bg-amber-400/30 hover:bg-amber-500/60'
@@ -295,9 +297,27 @@ const TodaySpl = () => {
             ))}
           </div>
 
+          {/* Mobile Navigation Buttons - Only visible on mobile */}
+          <div className="flex justify-center mt-4 space-x-4 sm:hidden">
+            <button
+              onClick={goToPrevious}
+              className="bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full p-3 transition-all duration-300 transform hover:scale-110 border border-gray-200 group"
+              aria-label="Previous item"
+            >
+              <ChevronLeft className="w-5 h-5 text-gray-700 group-hover:text-amber-600 transition-colors duration-300" />
+            </button>
+            <button
+              onClick={goToNext}
+              className="bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full p-3 transition-all duration-300 transform hover:scale-110 border border-gray-200 group"
+              aria-label="Next item"
+            >
+              <ChevronRight className="w-5 h-5 text-gray-700 group-hover:text-amber-600 transition-colors duration-300" />
+            </button>
+          </div>
+
           {/* Auto-play Status Indicator */}
-          <div className="absolute top-4 right-4 z-10">
-            <div className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 ${
+          <div className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10">
+            <div className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 ${
               isAutoPlaying 
                 ? 'bg-green-500/90 text-white' 
                 : 'bg-gray-500/90 text-white'
