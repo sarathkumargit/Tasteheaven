@@ -14,7 +14,7 @@ const TodaySpl = () => {
       id: 3,
       name: "Steak & Fries",
       category: "Dinner",
-      price: "Lkr28.99",
+      price: "Lkr280.99",
       originalPrice: "Lkr 340.99",
       image: "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?w=300&h=200&fit=crop",
       rating: 4.7,
